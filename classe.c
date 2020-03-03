@@ -26,13 +26,13 @@ char* homeworld;
 void lerArquivo(char* filename, struct personagem *personagem)
 {
     FILE* arquivo = fopen(filename, "rt");
-    int buffer_size = 300;
-    char linha[500];
+    int buffer_size = 3000;
+    //char* buffer[500] = (char *)malloc(buffer_size*sizeof(char*));
 
     do{
-    getline(linha,300,arquivo);
+    getline(&personagem->file,&buffer_size,arquivo);
     } while(!feof(arquivo));
-    //printf("%s",personagem.file);
+
     fclose(arquivo);
     printf("%s\n",personagem->file);
 }
