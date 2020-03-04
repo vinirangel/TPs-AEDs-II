@@ -88,13 +88,14 @@ public class Personagem {
 
 	public void getPeso()
 	{
+
 		MyIO.print(" ## "+peso);
 	}
 
 	public void setCorDoCabelo()
 	{
 		String[] temp = file.split("hair_color':");
-		String[] tmp = temp[1].split(",");
+		String[] tmp = temp[1].split("',");
 		corDoCabelo = tmp[0].replace("'","").trim();
 	}
 
@@ -106,7 +107,7 @@ public class Personagem {
 	public void setCorDaPele()
 	{
 		String[] temp = file.split("skin_color':");
-		String[] tmp = temp[1].split(",");
+		String[] tmp = temp[1].split("',");
 		tmp[0] = tmp[0].replace("'","");
 		corDaPele = tmp[0].trim();
 	}
@@ -119,7 +120,7 @@ public class Personagem {
 	public void setCorDosOlhos()
 	{
 		String[] temp = file.split("eye_color':");
-		String[] tmp = temp[1].split(",");
+		String[] tmp = temp[1].split("',");
 		corDosOlhos = tmp[0].replace("'","").trim();
 	}
 
@@ -189,7 +190,7 @@ public class Personagem {
 		MyIO.print(" ## "+corDosOlhos);
 		MyIO.print(" ## "+anoNascimento);
 		MyIO.print(" ## "+genero);
-		MyIO.print(" ## "+homeworld+"\n");
+		MyIO.print(" ## "+homeworld+" ## "+"\n");
 	}
 
 	public static boolean isFim(String s){
@@ -198,6 +199,7 @@ public class Personagem {
 	
 	public static void main (String[] Args)
 	{
+		MyIO.setCharset("utf-8");
 		String[] linha = new String[100];
 		Personagem personagem = new Personagem();
 		int numEntrada = 0;
