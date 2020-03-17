@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define bool      short
 #define true      1
@@ -265,161 +266,79 @@ bool isFim(char* s){
 
 //=====================================================Fim Da Classe Personagem========================================================
 
-typedef struct lista{
+typedef struct filaCircular{
 	PERSONAGEM array;
-	int Tamanho;
-}LISTA;
+}FILA;
 
-int quantidade = 0;
-int tamanho = 100;
-int numEntrada = 0;
+int MAXTAM = 6;
+double soma;
+double elementos;
+double media;
+int primeiro;
+int ultimo;
 
-void construirLista(char linha[][TAMLINHA], int numEntrada, LISTA lista[])
+void Start()
 {
-	for(int x = 0; x < numEntrada; x++)
-	{
-		lista[x].array = lerArquivo(linha[x],lista[x].array);
-		lista[x].array = setAll(lista[x].array);
-		quantidade++;
-	}
+	primeiro = ultimo = 0;
 }
 
-void inserirInicio(LISTA lista[],PERSONAGEM personagem)
-{
-	if(quantidade < tamanho)
-	{
-		for(int x = quantidade; x > 0; x--)
-		{
-			lista[x].array = clone(lista[x-1].array);
-		}
-		lista[0].array = clone(personagem);
-		quantidade++;
-	}
-	else{
-		printf("\nO array esta cheio");
-	}
-}
 
-void inserir(LISTA lista[],PERSONAGEM personagem,int pos)
+PERSONAGEM remover(FILA fila[])
 {
-	if(quantidade < tamanho)
+	if(primeiro == ultimo)
 	{
-		for(int x = quantidade; x > pos; x--)
-		{
-			lista[x].array = clone(lista[x-1].array);
-		}
-		lista[pos].array = clone(personagem);
-		quantidade++;
+		printf("\nErro ao remover");
+		exit(1);
 	}
-	else{
-		printf("\nO array esta cheio");
-	}
-}
 
-void inserirFim(LISTA lista[],PERSONAGEM personagem)
-{
-	if(quantidade < tamanho)
-	{
-		lista[quantidade].array = clone(personagem);
-		quantidade++;
-	}
-	else{
-		printf("\nO array esta cheio");
-	}
-}
-
-PERSONAGEM removerInicio(LISTA lista[])
-{
-	PERSONAGEM resp = clone(lista[0].array);
-	setNome(resp);
-
-	if(quantidade != 0)
-	{
-		quantidade--;
-		for(int x = 0; x < quantidade; x++)
-		{
-			lista[x].array = clone(lista[x+1].array);
-		}
-	}
+	PERSONAGEM resp = clone(fila[primeiro].array);
+	resp = setAll(resp);
+	primeiro = (primeiro + 1) % MAXTAM;
 	return resp;
-}
+} 
 
-PERSONAGEM remover(LISTA lista[], int pos)
+
+void getMedia(FILA fila[])
 {
-	PERSONAGEM resp = clone(lista[pos].array);
-
-	if(quantidade > 0 && pos >= 0 && pos < quantidade)
+	for(int i = primeiro; i != ultimo; i = ((i + 1) % MAXTAM))
 	{
-		quantidade--;
-
-		for(int x = pos; x < quantidade; x++)
-		{
-			lista[x].array = clone(lista[x+1].array);
-		}
-		setNome(resp);
+		//printf("\n[%d]",i);
+		//printAll(fila[i].array);
+		elementos++;
+		soma = soma + getAltura(fila[i].array);
 	}
-	return resp;
+	media =  round(soma/elementos);
+	//printf("\nSoma = %.0lf, Elementos = %.0lf, Media = %.0lf",soma, elementos, media);
+	printf("\n%.0lf",media);
 }
 
-PERSONAGEM removerFim(LISTA lista[])
+void inserir(FILA fila[],PERSONAGEM personagem)
 {
-	PERSONAGEM resp = clone(lista[quantidade].array);
+	media = 0;
+	soma = 0;
+	elementos = 0;
 
-	if(quantidade > 0)
+	if(((ultimo + 1) % MAXTAM) == primeiro)
 	{
-		quantidade--;
-		lista[quantidade].array = setNome(lista[quantidade].array);
+		remover(fila);
 	}
-	return lista[quantidade].array;
+	//printf("\nULTIMO = %d, PRIMEIRO = %d",ultimo, primeiro);
+	fila[ultimo].array = clone(personagem);
+	fila[ultimo].array = setAll(fila[ultimo].array);
+	//printf("\nELEMENTOS INSERIR= %d",elementos);
+	ultimo = (ultimo + 1) % MAXTAM;
+	getMedia(fila);
 }
 
-bool pesquisa(LISTA lista[], int esq, int dir, char* chave)
-{
-	while(esq <= dir)
-	{
-		int mid = esq + (dir - esq) /2;
-		//printf("\n%s",getNome(lista[mid].array));
-		//printf("\n%s",chave);
-		//printf("\nCMP = %d",strcmp(getNome(lista[mid].array),chave) );
-		bool resp = strcmp(getNome(lista[mid].array), chave);
-
-		//if(strcmp(getNome(lista[mid].array),chave) == 0)
-		if (resp == 0)
-		{
-			return true;	
-		}
-		//if(strcmp(getNome(lista[mid].array),chave) < 0)
-		if( resp < 0)
-		{
-			esq = mid + 1;
-		}
-		else{
-			dir = mid - 1;
-		}
-	}
-	return false;
-}
-
-void mostrarArray(LISTA lista[])
-{
-	for(int x = 0; x < quantidade; x++)
-	{
-		lista[x].array = setAll(lista[x].array);
-	}
-
-	for(int x = 0; x < quantidade; x++)
-	{
-		printf("[%d] ",x);
-		printAll(lista[x].array);
-	}
-}
 
 int main(int argc, char** argv)
 {
 	char entrada[NUMENTRADA][TAMLINHA];
 	char entrada2[NUMENTRADA][TAMLINHA];
 	char* nome = (char*) malloc(sizeof(char*)*1000);
+	int numEntrada = 0;
 	int numEntrada2 = 0;
+	int quant = 0;
 
 	//Ler todas as entradas
 	do {
@@ -427,33 +346,40 @@ int main(int argc, char** argv)
 	} while (isFim(entrada[numEntrada++]) == false);
 	numEntrada--;
 
-	PERSONAGEM personagem[tamanho];
-	LISTA lista[tamanho];
-	construirLista(entrada,numEntrada,lista);
+	PERSONAGEM personagem[100];
+	FILA fila[MAXTAM+1];
+	Start();
+	scanf("%d",&quant);
+
+	for(int x = 0; x < numEntrada; x++)
+	{
+		personagem[x] = newPersonagem();
+		personagem[x] = lerArquivo(entrada[x],personagem[x]);
+		personagem[x] = setAll(personagem[x]);
+		//printf("\nREPETICAO = %d\n",x);
+		//printf("\n========================================================================");
+		inserir(fila,personagem[x]);
+	}
 
 	do {
 		fgets(entrada2[numEntrada2], TAMLINHA, stdin);
-	} while (isFim(entrada2[numEntrada2++]) == false);
-	numEntrada2 -= 2;
+	}while(numEntrada2++ != quant);
 
-	//mostrarArray(lista);
-	//printf("\nCHAVE = %s",entrada2[19]);
-	//printf("\nLISTA = %s",getNome(lista[23].array));
-	//printf("\nCMP = %d",(strcmp(getNome(lista[1].array),entrada2[0])));
-	//printf("\nCMP = %d",(strcmp(entrada2[19], getNome(lista[23].array)) ));
-
-	for(int x = 0; x < numEntrada2; x++)
+	for(int x = 0; x < quant; x++)
 	{
-		//bool resp = pesquisa(lista,0,quantidade,entrada2[x]);
-		//printf("\nRESP = %d",resp);
-		//printAll(lista[quantidade-1].array);
-		//setAll(lista[
-		if(pesquisa(lista,0,quantidade,entrada2[x]))
+		if(strstr(entrada2[x],"I") != NULL)
 		{
-			printf("\n\nSIM\n");	
+			nome = strstr(entrada2[x],"/");
+			personagem[x] = newPersonagem();
+			personagem[x] = lerArquivo(nome,personagem[x]);
+			personagem[x] = setAll(personagem[x]);
+			inserir(fila,personagem[x]);
 		}
-		else{
-			printf("\n\nNAO\n");
+		if(strstr(entrada2[x],"R") != NULL)
+		{
+			printf("\n(R) %s",getNome(remover(fila)));
 		}
 	}
+	//mostrarArray(fila);
+
 }

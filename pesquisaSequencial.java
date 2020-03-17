@@ -1,4 +1,4 @@
-public class Personagem {
+class Personagem {
 
 	private String file;
 	private String nome;
@@ -20,20 +20,29 @@ public class Personagem {
 		this.nome = nome;
 	}
 
+	public Personagem clone( Personagem personagem)
+	{
+		Personagem personagem2 = new Personagem();
+		personagem2.file = personagem.file;
+		personagem2.nome = personagem.nome;
+		personagem2.altura = personagem.altura;
+		personagem2.peso = personagem.peso;
+		personagem2.corDoCabelo = personagem.corDoCabelo;
+		personagem2.corDaPele = personagem.corDaPele;
+		personagem2.corDosOlhos = personagem.corDosOlhos;
+		personagem2.anoNascimento = personagem.anoNascimento;
+		personagem2.genero = personagem.genero;
+		personagem2.homeworld = personagem.homeworld;
+		return personagem2;
+	}
+
 	public void lerArquivo(String filename)
 	{
 		Arq.openRead(filename,"iso-8859-1");
 		String linha = Arq.readLine();
 		Arq.close();
 		file = linha;
-		
 	}
-
-	/*public static String ISO88591toUTF8(String strISO) throws Exception
-	{
-		byte[] isoBytes = strISO.getBytes("ISO-8859-1");
-		return new String(isoBytes, "UTF-8");
-	}*/
 
 	public void setNome()
 	{
@@ -45,9 +54,9 @@ public class Personagem {
 		}
 	}
 
-	public void getNome()
+	public String getNome()
 	{
-		MyIO.print(" ## "+nome);
+		return nome;
 	}
 
 	public void setAltura()
@@ -56,7 +65,7 @@ public class Personagem {
 		String[] tmp = temp[1].split(",");
 		String tp = tmp[0].replace("'","");
 		tp = tp.replace(" ","");
-		
+
 		if(tp.contains("unknown")) 
 		{	
 			altura = 0;
@@ -66,15 +75,9 @@ public class Personagem {
 		}
 	}
 
-	public void getAltura()
+	public int getAltura()
 	{
-		if(altura == 0)
-		{
-			MyIO.println(" ## "+"unknown");
-		}
-		else{
-			MyIO.print(" ## "+altura);
-		}
+		return altura;
 	}
 
 	public void setPeso()
@@ -82,7 +85,7 @@ public class Personagem {
 		String[] temp = file.split("mass':");
 		String[] tmp = temp[1].split(",");
 		String weight = tmp[0].replace("'","").trim();
-		
+
 		if (weight.contains("unknown"))
 		{
 			peso = 0;
@@ -92,10 +95,9 @@ public class Personagem {
 		}
 	}
 
-	public void getPeso()
+	public double getPeso()
 	{
-
-		MyIO.print(" ## "+peso);
+		return peso;
 	}
 
 	public void setCorDoCabelo()
@@ -105,9 +107,9 @@ public class Personagem {
 		corDoCabelo = tmp[0].replace("'","").trim();
 	}
 
-	public void getCorDoCabelo()
+	public String getCorDoCabelo()
 	{
-		MyIO.print(" ## "+corDoCabelo);
+		return corDoCabelo;
 	}
 
 	public void setCorDaPele()
@@ -118,9 +120,9 @@ public class Personagem {
 		corDaPele = tmp[0].trim();
 	}
 
-	public void getCorDaPele()
+	public String getCorDaPele()
 	{
-		MyIO.print(" ## "+corDaPele);
+		return corDaPele;
 	}
 
 	public void setCorDosOlhos()
@@ -130,9 +132,9 @@ public class Personagem {
 		corDosOlhos = tmp[0].replace("'","").trim();
 	}
 
-	public void getCorDosOlhos()
+	public String getCorDosOlhos()
 	{
-		MyIO.print(" ## "+corDosOlhos);
+		return corDosOlhos;
 	}
 
 	public void setAnoNascimento()
@@ -142,9 +144,9 @@ public class Personagem {
 		anoNascimento = tmp[0].replace("'","").trim();
 	}
 
-	public void getAnoNascimento()
+	public String getAnoNascimento()
 	{
-		MyIO.print(" ## "+anoNascimento);
+		return anoNascimento;
 	}
 
 	public void setGenero()
@@ -154,9 +156,9 @@ public class Personagem {
 		genero = tmp[0].replace("'","").trim();
 	}
 
-	public void getGenero()
+	public String getGenero()
 	{
-		MyIO.print(" ## "+genero);
+		return genero;
 	}
 
 	public void setHomeworld()
@@ -166,10 +168,9 @@ public class Personagem {
 		homeworld = tmp[0].replace("'","").trim();
 	}
 
-	public void getHomeworld()
+	public String getHomeworld()
 	{
-		MyIO.print(" ## "+homeworld);
-		MyIO.println("");
+		return homeworld;
 	}
 
 	public void setAll()
@@ -190,6 +191,7 @@ public class Personagem {
 	{
 		MyIO.print(" ## "+nome);
 		MyIO.print(" ## "+altura);
+
 		if(String.valueOf(peso).contains(".0"))
 		{
 			MyIO.print(" ## "+String.valueOf(peso).replace(".0",""));
@@ -204,28 +206,110 @@ public class Personagem {
 		MyIO.print(" ## "+genero);
 		MyIO.print(" ## "+homeworld+" ## "+"\n");
 	}
+}
+
+//=====================================================Fim Da Classe Personagem========================================================
+
+public class pesquisaSequencial{
+	private Personagem[] array;
+	private int quantidade,comp;
+
+	pesquisaSequencial(){
+		quantidade = 0;
+		array = new Personagem[100];
+
+		for(int x = 0; x < array.length; x++)
+		{
+			array[x] = new Personagem();
+		}
+	}
+
+	public void construirLista(String linha, Personagem personagem)
+	{
+		if(quantidade < array.length)
+		{
+			array[quantidade] = array[quantidade].clone(personagem);
+			array[quantidade].setNome();
+			quantidade++;
+		}
+		else{
+			MyIO.println("O array esta cheio");
+		}
+	}
+
+	public boolean pesquisa(String chave)
+	{
+		boolean resp = false;
+
+		for(int x = 0; x < quantidade; x++)
+		{
+			if(array[x].getNome().equals(chave))
+			{
+				resp = true;
+			}
+		}
+		return resp;
+	}
+
+	public void mostrarArray()
+	{
+		for(int x = 0; x < quantidade; x++)
+		{
+			array[x].setAll();
+		}
+		for(int x = 0; x < quantidade; x++)
+		{
+			MyIO.print("["+x+"] ");
+			array[x].imprimir();
+		}
+	}
 
 	public static boolean isFim(String s){
 		return (s.length() >= 3 && s.charAt(0) == 'F' && s.charAt(1) == 'I' && s.charAt(2) == 'M');
 	}
-	
+
 	public static void main (String[] Args)
 	{
 		MyIO.setCharset("utf-8");
 		String[] linha = new String[100];
+		String[] linha2 = new String[100];
 		Personagem personagem = new Personagem();
 		int numEntrada = 0;
-		
+		int numEntrada2 = 0;
+
 		do {
 			linha[numEntrada] = MyIO.readLine();
 		} while (isFim(linha[numEntrada++]) == false);
 		numEntrada--;
 
+		pesquisaSequencial lista = new pesquisaSequencial();
+
 		for(int x = 0; x < numEntrada; x++)
 		{
 			personagem.lerArquivo(linha[x]);
-			personagem.setAll();
-			personagem.imprimir();
+			lista.construirLista(linha[x],personagem);
 		}
+
+		long startTime = System.nanoTime();
+
+		do {
+			linha2[numEntrada2] = MyIO.readLine();
+		} while (isFim(linha2[numEntrada2++]) == false);
+		numEntrada2--;
+
+		for(int x = 0; x < numEntrada2; x++)
+		{
+			if(lista.pesquisa(linha2[x]))
+			{
+				MyIO.println("SIM");
+			}
+			else{
+				MyIO.println("NAO");
+			}
+		}
+
+		long endTime = System.nanoTime();
+		long execTime= (endTime - startTime);
+		Arq.openWriteClose("668007_sequencial.txt", "UTF-8", "Matricula: 668007\t"+"Tempo de execucao:\t"+execTime+"\t"+"Comparacoes:\t"+lista.comp);
 	}
 }

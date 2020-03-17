@@ -1,3 +1,4 @@
+
 184
 92
 121
@@ -43,23 +44,25 @@
 145
 (R) Cliegg Lars
 (R) Grievous
-(R) Cordï¿½
+(R) Cordé
 (R) Jocasta Nu
 48
-64
-100
-102
 (R) Poe Dameron
-102
-130
-144
+97
+(R) R4-P17
+152
+138
+(R) R5-D4
+106
+(R) Tion Medon
+115
+129
 142
 155
 192
+(R) Tarfful
 179
 (R) Wedge Antilles
 (R) Mas Amedda
 (R) Lobot
-(R) Ric Oliï¿½
-(R) Palpatine
-
+(R) Ric Olié
